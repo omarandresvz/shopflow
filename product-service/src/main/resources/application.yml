@@ -1,0 +1,17 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: ${PRODUCT_SERVICE_DB_URL}
+    username: ${PRODUCT_SERVICE_DB_USERNAME}
+    password: ${PRODUCT_SERVICE_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}
