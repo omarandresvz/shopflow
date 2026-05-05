@@ -3,6 +3,7 @@ package com.shopflow.order.service.impl;
 import com.shopflow.order.dto.CreateOrderRequest;
 import com.shopflow.order.dto.OrderResponse;
 import com.shopflow.order.entity.Order;
+import com.shopflow.order.entity.OrderStatus;
 import com.shopflow.order.repository.OrderRepository;
 import com.shopflow.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .userId(userId)
                 .total(request.total())
+                .status(OrderStatus.CREATED)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -31,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
         return new OrderResponse(
                 saved.getId(),
                 saved.getTotal(),
+                saved.getStatus().name(),
                 saved.getCreatedAt()
         );
     }
@@ -42,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(o -> new OrderResponse(
                         o.getId(),
                         o.getTotal(),
+                        o.getStatus().name(),
                         o.getCreatedAt()
                 ))
                 .toList();

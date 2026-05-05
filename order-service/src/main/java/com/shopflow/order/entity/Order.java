@@ -22,5 +22,10 @@ public class Order {
 
     private Double total;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private OrderStatus status;
+
     private LocalDateTime createdAt;
+    
 }
