@@ -89,4 +89,20 @@ public class ProductServiceImpl implements ProductService {
                 product.getUpdatedAt()
         );
     }
+
+    @Override
+    @Transactional
+    public void decreaseStock(Long productId, Integer quantity) {
+
+        Product product = repository.findByIdAndActiveTrue(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (product.getStock() < quantity) {
+            throw new RuntimeException("Insufficient stock");
+        }
+
+        product.setStock(product.getStock() - quantity);
+
+        repository.save(product);
+    }
 }

@@ -2,6 +2,7 @@ package com.shopflow.product.controller;
 
 import com.shopflow.product.dto.ProductRequest;
 import com.shopflow.product.dto.ProductResponse;
+import com.shopflow.product.dto.UpdateStockRequest;
 import com.shopflow.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,5 +50,14 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PatchMapping("/{id}/stock/decrease")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void decreaseStock(
+            @PathVariable Long id,
+            @RequestBody UpdateStockRequest request
+    ) {
+        service.decreaseStock(id, request.quantity());
     }
 }

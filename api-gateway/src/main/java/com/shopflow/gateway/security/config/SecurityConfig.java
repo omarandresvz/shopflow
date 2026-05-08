@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -26,7 +27,22 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((exchange, e) -> {
+                        if (exchange.getResponse().isCommitted()) {
+                                return Mono.empty();
+                        }
+                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                        return exchange.getResponse().setComplete();
+                        })
+                        .accessDeniedHandler((exchange, e) -> {
+                        if (exchange.getResponse().isCommitted()) {
+                                return Mono.empty();
+                        }
+                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        return exchange.getResponse().setComplete();
+                        })
+                )
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
