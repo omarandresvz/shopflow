@@ -1,5 +1,8 @@
 package com.shopflow.order.dto;
 
+import java.util.List;
+
 public record CreateOrderRequest(
-        Double total
-) {}
+        List<OrderItemRequest> items
+) {
+}

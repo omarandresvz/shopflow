@@ -5,6 +5,7 @@ import com.shopflow.order.dto.OrderResponse;
 import com.shopflow.order.service.OrderService;
 import com.shopflow.security.model.CurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ public class OrderController {
     private final OrderService service;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse create(
             @RequestBody CreateOrderRequest request,
             Authentication authentication
