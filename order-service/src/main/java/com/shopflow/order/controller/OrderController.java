@@ -1,9 +1,11 @@
 package com.shopflow.order.controller;
 
-import com.shopflow.order.dto.CreateOrderRequest;
-import com.shopflow.order.dto.OrderResponse;
+import com.shopflow.order.dto.request.CreateOrderRequest;
+import com.shopflow.order.dto.response.OrderResponse;
 import com.shopflow.order.service.OrderService;
-import com.shopflow.security.model.CurrentUser;
+import com.shopflow.shared.security.model.CurrentUser;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -20,9 +22,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponse create(
-            @RequestBody CreateOrderRequest request,
-            Authentication authentication
+    public OrderResponse create(@RequestBody @Valid CreateOrderRequest request, Authentication authentication
     ) {
         CurrentUser user = (CurrentUser) authentication.getPrincipal();
         return service.create(user.userId(), request);

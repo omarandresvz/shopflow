@@ -7,7 +7,7 @@ import com.shopflow.auth.dto.response.LoginResponse;
 import com.shopflow.auth.dto.response.RegisterResponse;
 import com.shopflow.auth.dto.response.UserProfileResponse;
 import com.shopflow.auth.service.AuthService;
-import com.shopflow.security.model.CurrentUser;
+import com.shopflow.shared.security.model.CurrentUser;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

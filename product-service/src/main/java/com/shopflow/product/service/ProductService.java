@@ -1,7 +1,7 @@
 package com.shopflow.product.service;
 
-import com.shopflow.product.dto.ProductRequest;
-import com.shopflow.product.dto.ProductResponse;
+import com.shopflow.product.dto.request.ProductRequest;
+import com.shopflow.product.dto.response.ProductResponse;
 
 import java.util.List;
 

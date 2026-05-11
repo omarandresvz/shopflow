@@ -10,7 +10,7 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 * Autenticación stateless con JWT
 * Seguridad distribuida
 * Configuración mediante variables de entorno
-* Módulo reutilizable de seguridad (`common-security`)
+* Módulo reutilizable de seguridad y validaciones (`shared`)
 
 ---
 
@@ -34,7 +34,7 @@ Service  Service   Service       |
 * API Gateway centraliza el acceso
 * Cada microservicio valida el JWT de forma independiente
 * No se usan sesiones (stateless)
-* Seguridad reutilizable mediante `common-security`
+* Infraestructura compartida mediante módulo `shared`
 
 ---
 
@@ -81,7 +81,29 @@ POST /api/v1/auth/register
 POST /api/v1/auth/login
 GET  /api/v1/auth/me
 ```
+---
 
+## 🔄 Comunicación entre Microservicios
+
+La comunicación entre servicios se realiza mediante REST utilizando `RestClient`.
+
+Ejemplo:
+
+* `order-service` consulta productos en `product-service`
+* Validación de stock antes de crear órdenes
+* Traducción de errores remotos a excepciones de negocio locales
+
+Flujo simplificado:
+
+```text
+order-service
+    ↓
+product-service
+    ↓
+404 PRODUCT_NOT_FOUND
+    ↓
+OrderProductNotFoundException
+```
 ---
 
 ### 📦 product-service (8082)
@@ -134,15 +156,51 @@ Rutas:
 
 ---
 
-### 🔐 common-security
+### 🔐 shared
 
-Módulo compartido que contiene:
+Módulo compartido reutilizable utilizado por todos los microservicios.
 
-* Validación de JWT
+Incluye:
+
+* Validación y generación de JWT
 * Filtro de autenticación
 * Modelo `CurrentUser`
+* Manejo global de excepciones
+* `BusinessException`
+* `ErrorCode`
+* `ErrorResponse`
+* Handlers de seguridad (`401` / `403`)
+* Configuración reutilizable
 
-Utilizado por todos los microservicios.
+---
+
+## ⚠️ Manejo Global de Errores
+
+El proyecto implementa un sistema centralizado y consistente de manejo de errores.
+
+Características:
+
+* Respuestas JSON estandarizadas
+* Manejo global mediante `GlobalExceptionHandler`
+* `BusinessException` desacopladas
+* `ErrorCode` por microservicio
+* Manejo personalizado de errores JWT (`401` / `403`)
+* Traducción de errores entre microservicios
+* Manejo global de errores en API Gateway
+
+### Ejemplo de respuesta
+
+```json
+{
+  "timestamp": "2026-05-10T22:00:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Producto no encontrado",
+  "code": "PRODUCT_NOT_FOUND",
+  "path": "/api/v1/products/10"
+}
+```
+
 
 ---
 
@@ -235,17 +293,12 @@ docker compose up -d
 
 ---
 
-### 4. Ejecutar servicios
+### 4. Compilar proyecto
+
+Desde la raíz del proyecto:
 
 ```bash
-# common-security
 mvn clean install
-
-# luego cada servicio
-auth-service
-product-service
-order-service
-api-gateway
 ```
 
 ---
@@ -293,9 +346,13 @@ Authorization: Bearer <CUSTOMER_TOKEN>
 * Spring Boot 3.5.14
 * Spring Security
 * Spring Cloud Gateway
+* Spring WebFlux
+* Spring Data JPA / Hibernate
 * PostgreSQL
 * Maven
 * JWT (jjwt)
+* RestClient
+* Bean Validation
 
 ---
 
@@ -312,9 +369,13 @@ Authorization: Bearer <CUSTOMER_TOKEN>
 Demostrar:
 
 * Arquitectura de microservicios real
-* Seguridad con JWT
+* Seguridad distribuida con JWT
+* API Gateway Pattern
+* Comunicación REST entre servicios
+* Manejo profesional de errores
+* Código limpio y mantenible
 * Buenas prácticas backend
-* Diseño limpio y mantenible
+* Diseño escalable y desacoplado
 
 # 👨‍💻 Autor
 

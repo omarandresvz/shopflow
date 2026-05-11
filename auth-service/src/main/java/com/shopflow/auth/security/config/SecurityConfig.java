@@ -1,8 +1,8 @@
 package com.shopflow.auth.security.config;
 
-import com.shopflow.security.filter.JwtAuthenticationFilter;
-import com.shopflow.auth.security.handler.JwtAccessDeniedHandler;
-import com.shopflow.auth.security.handler.JwtAuthenticationEntryPoint;
+import com.shopflow.shared.security.filter.JwtAuthenticationFilter;
+//import com.shopflow.shared.security.handler.JwtAccessDeniedHandler;
+//import com.shopflow.shared.security.handler.JwtAuthenticationEntryPoint;
 import com.shopflow.auth.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.*;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -22,8 +23,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsServiceImpl userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
-    private final JwtAccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +38,8 @@ public class SecurityConfig {
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/login",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/error"
                         ).permitAll()
                         // endpoint solo ADMIN
                         .requestMatchers("/api/v1/auth/admin/**").hasRole("ADMIN")

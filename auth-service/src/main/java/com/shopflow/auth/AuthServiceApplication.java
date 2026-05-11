@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-import com.shopflow.security.config.JwtFilterConfig;
-import com.shopflow.security.config.JwtSecurityConfig;
+import com.shopflow.shared.security.config.JwtFilterConfig;
+import com.shopflow.shared.security.config.JwtSecurityConfig;
 
 @SpringBootApplication
 @Import({

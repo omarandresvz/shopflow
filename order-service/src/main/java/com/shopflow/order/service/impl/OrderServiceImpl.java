@@ -1,10 +1,10 @@
 package com.shopflow.order.service.impl;
 
 import com.shopflow.order.client.ProductClient;
-import com.shopflow.order.dto.CreateOrderRequest;
-import com.shopflow.order.dto.OrderItemResponse;
-import com.shopflow.order.dto.OrderResponse;
-import com.shopflow.order.dto.ProductResponse;
+import com.shopflow.order.dto.request.CreateOrderRequest;
+import com.shopflow.order.dto.response.OrderItemResponse;
+import com.shopflow.order.dto.response.OrderResponse;
+import com.shopflow.order.dto.response.ProductResponse;
 import com.shopflow.order.entity.Order;
 import com.shopflow.order.entity.OrderItem;
 import com.shopflow.order.entity.OrderStatus;

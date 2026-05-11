@@ -1,11 +1,12 @@
 package com.shopflow.gateway.security.config;
 
 import com.shopflow.gateway.security.converter.JwtAuthenticationConverter;
+import com.shopflow.gateway.security.handler.GatewayAuthenticationEntryPoint;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig {
 
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
+    private final GatewayAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -28,20 +30,7 @@ public class SecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((exchange, e) -> {
-                        if (exchange.getResponse().isCommitted()) {
-                                return Mono.empty();
-                        }
-                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                        return exchange.getResponse().setComplete();
-                        })
-                        .accessDeniedHandler((exchange, e) -> {
-                        if (exchange.getResponse().isCommitted()) {
-                                return Mono.empty();
-                        }
-                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                        return exchange.getResponse().setComplete();
-                        })
+                        .authenticationEntryPoint(authenticationEntryPoint)
                 )
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()

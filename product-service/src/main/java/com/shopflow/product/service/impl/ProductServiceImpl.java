@@ -1,11 +1,14 @@
 package com.shopflow.product.service.impl;
 
-import com.shopflow.product.dto.ProductRequest;
-import com.shopflow.product.dto.ProductResponse;
+import com.shopflow.product.dto.request.ProductRequest;
+import com.shopflow.product.dto.response.ProductResponse;
 import com.shopflow.product.entity.Product;
+import com.shopflow.product.exception.custom.InsufficientStockException;
+import com.shopflow.product.exception.custom.ProductNotFoundException;
 import com.shopflow.product.repository.ProductRepository;
 import com.shopflow.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductResponse findById(Long id) {
         Product product = repository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(ProductNotFoundException::new);
 
         return mapToResponse(product);
     }
@@ -55,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = repository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(ProductNotFoundException::new);
 
         product.setName(request.name());
         product.setDescription(request.description());
@@ -71,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void delete(Long id) {
         Product product = repository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(ProductNotFoundException::new);
 
         product.setActive(false);
         repository.save(product);
@@ -95,10 +98,10 @@ public class ProductServiceImpl implements ProductService {
     public void decreaseStock(Long productId, Integer quantity) {
 
         Product product = repository.findByIdAndActiveTrue(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStock() < quantity) {
-            throw new RuntimeException("Insufficient stock");
+            throw new InsufficientStockException();
         }
 
         product.setStock(product.getStock() - quantity);
