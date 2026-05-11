@@ -1,7 +1,7 @@
 package com.shopflow.order.service;
 
-import com.shopflow.order.dto.CreateOrderRequest;
-import com.shopflow.order.dto.OrderResponse;
+import com.shopflow.order.dto.request.CreateOrderRequest;
+import com.shopflow.order.dto.response.OrderResponse;
 
 import java.util.List;
 

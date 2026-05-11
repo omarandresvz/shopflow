@@ -7,9 +7,10 @@ import com.shopflow.auth.dto.response.RegisterResponse;
 import com.shopflow.auth.dto.response.UserProfileResponse;
 import com.shopflow.auth.entity.Role;
 import com.shopflow.auth.entity.User;
-import com.shopflow.auth.exception.EmailAlreadyExistsException;
+import com.shopflow.auth.exception.custom.EmailAlreadyExistsException;
+import com.shopflow.auth.exception.custom.UserNotFoundException;
 import com.shopflow.auth.repository.UserRepository;
-import com.shopflow.security.jwt.JwtService;
+import com.shopflow.shared.security.jwt.JwtService;
 import com.shopflow.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 
@@ -51,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
         return new RegisterResponse(
             savedUser.getId(),
             savedUser.getEmail(),
-            "User registered successfully"
+            "Usuario registrado exitosamente"
         );
     }
 
@@ -67,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = userRepository.findByEmail(normalizedEmail)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(UserNotFoundException::new);
 
         String token = jwtService.generateToken(
             user.getId(),
@@ -87,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public UserProfileResponse getCurrentUser(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         return new UserProfileResponse(
                 user.getId(),
