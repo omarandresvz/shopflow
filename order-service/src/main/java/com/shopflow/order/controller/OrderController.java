@@ -33,4 +33,28 @@ public class OrderController {
         CurrentUser user = (CurrentUser) authentication.getPrincipal();
         return service.getMyOrders(user.userId());
     }
+
+    @PatchMapping("/{id}/pay")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void payOrder(@PathVariable Long id) {
+        service.payOrder(id);
+    }
+
+    @PatchMapping("/{id}/ship")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void shipOrder(@PathVariable Long id) {
+        service.shipOrder(id);
+    }
+
+    @PatchMapping("/{id}/deliver")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deliverOrder(@PathVariable Long id) {
+        service.deliverOrder(id);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelOrder(@PathVariable Long id) {
+        service.cancelOrder(id);
+    }
 }

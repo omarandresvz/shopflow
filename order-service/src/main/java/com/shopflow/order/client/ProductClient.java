@@ -3,6 +3,7 @@ package com.shopflow.order.client;
 import com.shopflow.order.dto.request.UpdateStockRequest;
 import com.shopflow.order.dto.response.ProductResponse;
 import com.shopflow.order.exception.custom.InsufficientStockException;
+import com.shopflow.order.exception.custom.InvalidOrderStatusTransitionException;
 import com.shopflow.order.exception.custom.OrderProductNotFoundException;
 import com.shopflow.order.exception.custom.ProductServiceUnavailableException;
 import com.shopflow.shared.exception.BusinessException;
@@ -55,6 +56,35 @@ public class ProductClient {
                                 throw new InsufficientStockException();
                             }
                     )
+                    .onStatus(
+                            status -> status.value() == 404,
+                            (request, response) -> {
+                                throw new OrderProductNotFoundException();
+                            }
+                    )
+                    .onStatus(
+                            status -> status.value() == 400,
+                            (request, response) -> {
+                                throw new InvalidOrderStatusTransitionException();
+                            }
+                    )
+                    .toBodilessEntity();
+
+        } catch (BusinessException ex) {
+            throw ex;
+
+        } catch (Exception ex) {
+            throw new ProductServiceUnavailableException(ex);
+        }
+    }
+
+    public void increaseStock(Long productId, Integer quantity) {
+
+        try {
+            restClient.patch()
+                    .uri(productServiceUrl + "/api/v1/products/{id}/stock/increase", productId)
+                    .body(new UpdateStockRequest(quantity))
+                    .retrieve()
                     .onStatus(
                             status -> status.value() == 404,
                             (request, response) -> {

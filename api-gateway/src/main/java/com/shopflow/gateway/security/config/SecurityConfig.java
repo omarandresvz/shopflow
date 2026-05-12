@@ -1,6 +1,7 @@
 package com.shopflow.gateway.security.config;
 
 import com.shopflow.gateway.security.converter.JwtAuthenticationConverter;
+import com.shopflow.gateway.security.handler.GatewayAccessDeniedHandler;
 import com.shopflow.gateway.security.handler.GatewayAuthenticationEntryPoint;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
     private final GatewayAuthenticationEntryPoint authenticationEntryPoint;
+    private final GatewayAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -31,12 +33,17 @@ public class SecurityConfig {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .pathMatchers("/actuator/health").permitAll()
                         .pathMatchers("/api/v1/auth/admin/**").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PATCH, "/api/v1/orders/{id}/pay").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PATCH, "/api/v1/orders/*/ship").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PATCH, "/api/v1/orders/{id}/deliver").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PATCH, "/api/v1/orders/{id}/cancel").hasAnyRole("CUSTOMER", "ADMIN")
                         .anyExchange().authenticated()
                 )
 
