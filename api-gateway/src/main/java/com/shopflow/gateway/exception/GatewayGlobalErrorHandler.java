@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -23,11 +24,15 @@ public class GatewayGlobalErrorHandler implements ErrorWebExceptionHandler {
     private final ObjectMapper objectMapper;
 
     @Override
-    public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+    @NonNull
+    public Mono<Void> handle(
+            @NonNull ServerWebExchange exchange,
+            @NonNull Throwable ex
+    ) {
         var response = exchange.getResponse();
 
         if (response.isCommitted()) {
-            return Mono.error(ex);
+            return Mono.empty();
         }
 
         HttpStatus status = resolveStatus(ex);
@@ -51,7 +56,7 @@ public class GatewayGlobalErrorHandler implements ErrorWebExceptionHandler {
             return response.writeWith(Mono.just(buffer));
 
         } catch (Exception e) {
-            return Mono.error(e);
+            return Mono.<Void>error(e);
         }
     }
 
