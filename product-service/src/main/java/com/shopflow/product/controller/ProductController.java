@@ -53,8 +53,13 @@ public class ProductController {
 
     @PatchMapping("/{id}/stock/decrease")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void decreaseStock(@PathVariable Long id, @RequestBody @Valid UpdateStockRequest request
-    ) {
+    public void decreaseStock(@PathVariable Long id, @RequestBody @Valid UpdateStockRequest request) {
         service.decreaseStock(id, request.quantity());
+    }
+
+    @PatchMapping("/{id}/stock/increase")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void increaseStock(@PathVariable Long id, @RequestBody @Valid UpdateStockRequest request) {
+        service.increaseStock(id, request.quantity());
     }
 }

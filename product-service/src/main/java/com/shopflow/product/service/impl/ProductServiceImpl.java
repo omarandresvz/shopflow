@@ -7,6 +7,7 @@ import com.shopflow.product.exception.custom.InsufficientStockException;
 import com.shopflow.product.exception.custom.ProductNotFoundException;
 import com.shopflow.product.repository.ProductRepository;
 import com.shopflow.product.service.ProductService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -105,6 +106,18 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setStock(product.getStock() - quantity);
+
+        repository.save(product);
+    }
+
+    @Override
+    @Transactional
+    public void increaseStock(Long productId, Integer quantity) {
+
+        Product product = repository.findByIdAndActiveTrue(productId)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.setStock(product.getStock() + quantity);
 
         repository.save(product);
     }

@@ -37,7 +37,7 @@ public class JwtAuthenticationConverter implements ServerAuthenticationConverter
 
         String email = jwtService.extractSubject(token);
         String role = jwtService.extractRole(token);
-
+        
         var authorities = List.of(
                 new SimpleGrantedAuthority("ROLE_" + role)
         );

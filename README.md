@@ -91,6 +91,8 @@ Ejemplo:
 
 * `order-service` consulta productos en `product-service`
 * Validación de stock antes de crear órdenes
+* Reducción automática de stock al crear órdenes
+* Restauración automática de stock al cancelar órdenes
 * Traducción de errores remotos a excepciones de negocio locales
 
 Flujo simplificado:
@@ -111,14 +113,18 @@ OrderProductNotFoundException
 Responsable de:
 
 * Gestión de productos
+* Control de stock
 
 Endpoints:
 
 ```http
-GET    /api/v1/products           → Público
-POST   /api/v1/products           → ADMIN
-PUT    /api/v1/products/{id}      → ADMIN
-DELETE /api/v1/products/{id}      → ADMIN
+GET    /api/v1/products                         → Público
+GET    /api/v1/products/{id}                    → Público
+POST   /api/v1/products                         → ADMIN
+PUT    /api/v1/products/{id}                    → ADMIN
+DELETE /api/v1/products/{id}                    → ADMIN
+PATCH  /api/v1/products/{id}/stock/decrease     → Interno
+PATCH  /api/v1/products/{id}/stock/increase     → Interno
 ```
 
 ---
@@ -128,13 +134,20 @@ DELETE /api/v1/products/{id}      → ADMIN
 Responsable de:
 
 * Creación de órdenes
-* Consulta de órdenes por usuario
+* Consulta de órdenes
+* Flujo de estados de órdenes
+* Validación de ownership
+* Restauración de stock al cancelar órdenes
 
 Endpoints:
 
 ```http
-POST /api/v1/orders        → CUSTOMER
-GET  /api/v1/orders/my     → CUSTOMER
+POST  /api/v1/orders                 → CUSTOMER
+GET   /api/v1/orders/my              → CUSTOMER
+PATCH /api/v1/orders/{id}/cancel     → CUSTOMER / ADMIN
+PATCH /api/v1/orders/{id}/pay        → ADMIN
+PATCH /api/v1/orders/{id}/ship       → ADMIN
+PATCH /api/v1/orders/{id}/deliver    → ADMIN
 ```
 
 ---
@@ -174,6 +187,63 @@ Incluye:
 
 ---
 
+## 🔁 Flujo de Estados de Órdenes
+
+Las órdenes siguen el siguiente flujo:
+
+```text
+CREATED → PAID → SHIPPED → DELIVERED
+```
+
+Cancelaciones permitidas:
+
+```text
+CREATED → CANCELLED
+PAID    → CANCELLED
+```
+
+Estados finales:
+
+```text
+DELIVERED
+CANCELLED
+```
+El sistema valida automáticamente:
+
+* Transiciones válidas
+* Ownership de órdenes
+* Roles de usuario
+* Restauración de stock en cancelaciones
+
+---
+
+## 🔐 Reglas de Autorización
+
+**CUSTOMER**
+
+Puede:
+
+* Crear órdenes
+* Consultar sus propias órdenes
+* Cancelar sus propias órdenes
+
+No puede:
+
+* Marcar órdenes como pagadas
+* Despachar órdenes
+* Entregar órdenes
+* Cancelar órdenes ajenas
+
+**ADMIN**
+
+Puede:
+
+* Gestionar productos
+* Cambiar estados de órdenes
+* Cancelar cualquier orden
+
+---
+
 ## ⚠️ Manejo Global de Errores
 
 El proyecto implementa un sistema centralizado y consistente de manejo de errores.
@@ -197,7 +267,8 @@ Características:
   "error": "Not Found",
   "message": "Producto no encontrado",
   "code": "PRODUCT_NOT_FOUND",
-  "path": "/api/v1/products/10"
+  "path": "/api/v1/products/10",
+  "errors": []
 }
 ```
 
@@ -305,7 +376,15 @@ mvn clean install
 
 ## 🔄 Flujo de uso
 
-### 1. Login
+### 1. Registrar usuario
+
+```http
+POST /api/v1/auth/register
+```
+
+---
+
+### 2. Login
 
 ```http
 POST /api/v1/auth/login
@@ -313,7 +392,7 @@ POST /api/v1/auth/login
 
 ---
 
-### 2. Crear producto (ADMIN)
+### 3. Crear producto (ADMIN)
 
 ```http
 POST /api/v1/products
@@ -322,21 +401,76 @@ Authorization: Bearer <ADMIN_TOKEN>
 
 ---
 
-### 3. Crear orden (CUSTOMER)
+### 4. Consultar productos
+
+```http
+GET /api/v1/products
+```
+
+---
+
+### 5. Crear orden (CUSTOMER)
 
 ```http
 POST /api/v1/orders
 Authorization: Bearer <CUSTOMER_TOKEN>
 ```
 
+El sistema:
+
+* Valida productos
+* Valida stock
+* Calcula total
+* Reduce stock automáticamente
+
 ---
 
-### 4. Ver órdenes
+### 6. Pagar orden (ADMIN)
 
 ```http
-GET /api/v1/orders/my
-Authorization: Bearer <CUSTOMER_TOKEN>
+PATCH /api/v1/orders/{id}/pay
+Authorization: Bearer <admin-token>
 ```
+
+---
+
+### 7. Despachar orden (ADMIN)
+
+```http
+PATCH /api/v1/orders/{id}/ship
+Authorization: Bearer <admin-token>
+```
+
+---
+
+### 8. Entregar orden (ADMIN)
+
+```http
+PATCH /api/v1/orders/{id}/deliver
+Authorization: Bearer <admin-token>
+```
+
+---
+
+### 9. Cancelar orden
+
+**CUSTOMER**
+
+Puede cancelar únicamente sus propias órdenes.
+
+**ADMIN**
+
+Puede cancelar cualquier orden.
+
+```http
+PATCH /api/v1/orders/{id}/cancel
+```
+
+El sistema:
+
+* Valida ownership
+* Valida transición de estado
+* Restaura stock automáticamente
 
 ---
 
@@ -359,8 +493,9 @@ Authorization: Bearer <CUSTOMER_TOKEN>
 ## 📌 Mejoras futuras
 
 * Dockerización completa del sistema
-* Manejo de stock
-* Estados de órdenes
+* API Documentation (Swagger/OpenAPI)
+* Comunicación asíncrona con Kafka/RabbitMQ
+* Notificaciones
 
 ---
 
@@ -376,6 +511,9 @@ Demostrar:
 * Código limpio y mantenible
 * Buenas prácticas backend
 * Diseño escalable y desacoplado
+* Role-Based Access Control (RBAC)
+* Ownership validation
+* Domain state flow
 
 # 👨‍💻 Autor
 

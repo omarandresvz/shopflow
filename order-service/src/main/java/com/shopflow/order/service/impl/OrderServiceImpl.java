@@ -8,9 +8,17 @@ import com.shopflow.order.dto.response.ProductResponse;
 import com.shopflow.order.entity.Order;
 import com.shopflow.order.entity.OrderItem;
 import com.shopflow.order.entity.OrderStatus;
+import com.shopflow.order.exception.custom.InvalidOrderStatusTransitionException;
+import com.shopflow.order.exception.custom.OrderAccessDeniedException;
+import com.shopflow.order.exception.custom.OrderNotFoundException;
 import com.shopflow.order.repository.OrderRepository;
 import com.shopflow.order.service.OrderService;
+import com.shopflow.shared.security.model.CurrentUser;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,5 +99,125 @@ public class OrderServiceImpl implements OrderService {
                 order.getCreatedAt(),
                 items
         );
+    }
+
+    private Order findOrderById(Long orderId) {
+        return repository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Override
+    @Transactional
+    public void payOrder(Long orderId) {
+
+        Order order = findOrderById(orderId);
+
+        validateCanPay(order);
+
+        order.setStatus(OrderStatus.PAID);
+
+        repository.save(order);
+    }
+
+    private void validateCanPay(Order order) {
+
+        if (order.getStatus() != OrderStatus.CREATED) {
+            throw new InvalidOrderStatusTransitionException();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void shipOrder(Long orderId) {
+
+        Order order = findOrderById(orderId);
+
+        validateCanShip(order);
+
+        order.setStatus(OrderStatus.SHIPPED);
+
+        repository.save(order);
+    }
+
+    private void validateCanShip(Order order) {
+
+        if (order.getStatus() != OrderStatus.PAID) {
+            throw new InvalidOrderStatusTransitionException();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deliverOrder(Long orderId) {
+
+        Order order = findOrderById(orderId);
+
+        validateCanDeliver(order);
+
+        order.setStatus(OrderStatus.DELIVERED);
+
+        repository.save(order);
+    }
+
+    private void validateCanDeliver(Order order) {
+
+        if (order.getStatus() != OrderStatus.SHIPPED) {
+            throw new InvalidOrderStatusTransitionException();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId) {
+
+        Order order = findOrderById(orderId);
+
+        validateOwnership(order);
+
+        validateCanCancel(order);
+
+        restoreStock(order);
+
+        order.setStatus(OrderStatus.CANCELLED);
+
+        repository.save(order);
+    }
+
+    private void validateCanCancel(Order order) {
+
+        if (order.getStatus() != OrderStatus.CREATED && order.getStatus() != OrderStatus.PAID) {
+
+            throw new InvalidOrderStatusTransitionException();
+        }
+    }
+
+    private void restoreStock(Order order) {
+
+        for (OrderItem item : order.getItems()) {
+
+            productClient.increaseStock(
+                    item.getProductId(),
+                    item.getQuantity()
+            );
+        }
+    }
+
+    private void validateOwnership(Order order) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        CurrentUser currentUser =
+                (CurrentUser) authentication.getPrincipal();
+
+        Long currentUserId = currentUser.userId();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !order.getUserId().equals(currentUserId)) {
+            throw new OrderAccessDeniedException();
+        }
     }
 }
