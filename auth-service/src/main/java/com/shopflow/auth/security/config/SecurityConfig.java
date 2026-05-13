@@ -35,12 +35,19 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/v1/auth/register",
+                               "/api/v1/auth/register",
                                 "/api/v1/auth/login",
+
+                                "/swagger-ui.html",
                                 "/swagger-ui/**",
+                                "/v3/api-docs",
                                 "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+
                                 "/error"
                         ).permitAll()
+                        
                         // endpoint solo ADMIN
                         .requestMatchers("/api/v1/auth/admin/**").hasRole("ADMIN")
                         // cualquier otro requiere autenticación
