@@ -40,6 +40,17 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger/OpenAPI
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/error"
+                        ).permitAll()
+
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/pay").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/ship").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/deliver").hasRole("ADMIN")

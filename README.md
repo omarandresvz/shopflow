@@ -11,6 +11,7 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 * Seguridad distribuida
 * Configuración mediante variables de entorno
 * Módulo reutilizable de seguridad y validaciones (`shared`)
+* Documentación interactiva de APIs
 
 ---
 
@@ -374,6 +375,26 @@ mvn clean install
 
 ---
 
+## 📘 Documentación API (Swagger/OpenAPI)
+
+Cada microservicio expone su propia documentación OpenAPI mediante Swagger UI.
+
+URLs disponibles:
+
+```text
+http://localhost:8081/swagger-ui.html
+http://localhost:8082/swagger-ui.html
+http://localhost:8083/swagger-ui.html
+```
+
+Características:
+
+* Documentación interactiva
+* Soporte para JWT Bearer Token
+* Seguridad y respuestas HTTP documentadas
+
+---
+
 ## 🔄 Flujo de uso
 
 ### 1. Registrar usuario
@@ -487,13 +508,13 @@ El sistema:
 * JWT (jjwt)
 * RestClient
 * Bean Validation
+* Swagger / OpenAPI 
 
 ---
 
 ## 📌 Mejoras futuras
 
 * Dockerización completa del sistema
-* API Documentation (Swagger/OpenAPI)
 * Comunicación asíncrona con Kafka/RabbitMQ
 * Notificaciones
 
@@ -514,6 +535,7 @@ Demostrar:
 * Role-Based Access Control (RBAC)
 * Ownership validation
 * Domain state flow
+* Documentación profesional de APIs con Swagger/OpenAPI
 
 # 👨‍💻 Autor
 

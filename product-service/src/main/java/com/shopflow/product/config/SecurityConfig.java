@@ -36,6 +36,17 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger/OpenAPI
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/error"
+                        ).permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/products/{id}/stock/decrease").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/products/{id}/stock/increase").permitAll()
