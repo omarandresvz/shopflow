@@ -118,6 +118,7 @@ class AuthControllerTest {
         verify(authService).login(any(LoginRequest.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     void shouldGetCurrentUserProfile() {
         CurrentUser currentUser = new CurrentUser(
