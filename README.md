@@ -12,6 +12,7 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 * Configuración mediante variables de entorno
 * Módulo reutilizable de seguridad y validaciones (`shared`)
 * Documentación interactiva de APIs
+* Testing unitario y de controladores
 
 ---
 
@@ -82,32 +83,6 @@ POST /api/v1/auth/register
 POST /api/v1/auth/login
 GET  /api/v1/auth/me
 ```
----
-
-## 🔄 Comunicación entre Microservicios
-
-La comunicación entre servicios se realiza mediante REST utilizando `RestClient`.
-
-Ejemplo:
-
-* `order-service` consulta productos en `product-service`
-* Validación de stock antes de crear órdenes
-* Reducción automática de stock al crear órdenes
-* Restauración automática de stock al cancelar órdenes
-* Traducción de errores remotos a excepciones de negocio locales
-
-Flujo simplificado:
-
-```text
-order-service
-    ↓
-product-service
-    ↓
-404 PRODUCT_NOT_FOUND
-    ↓
-OrderProductNotFoundException
-```
----
 
 ### 📦 product-service (8082)
 
@@ -170,6 +145,32 @@ Rutas:
 
 ---
 
+## 🔄 Comunicación entre Microservicios
+
+La comunicación entre servicios se realiza mediante REST utilizando `RestClient`.
+
+Ejemplo:
+
+* `order-service` consulta productos en `product-service`
+* Validación de stock antes de crear órdenes
+* Reducción automática de stock al crear órdenes
+* Restauración automática de stock al cancelar órdenes
+* Traducción de errores remotos a excepciones de negocio locales
+
+Flujo simplificado:
+
+```text
+order-service
+    ↓
+product-service
+    ↓
+404 PRODUCT_NOT_FOUND
+    ↓
+OrderProductNotFoundException
+```
+
+---
+
 ### 🔐 shared
 
 Módulo compartido reutilizable utilizado por todos los microservicios.
@@ -209,6 +210,7 @@ Estados finales:
 DELIVERED
 CANCELLED
 ```
+
 El sistema valida automáticamente:
 
 * Transiciones válidas
@@ -509,6 +511,70 @@ El sistema:
 * RestClient
 * Bean Validation
 * Swagger / OpenAPI 
+* JUnit 5
+* Mockito
+
+---
+
+## 🧪 Testing
+
+El proyecto incluye pruebas unitarias y pruebas de controladores para validar la lógica de negocio y los endpoints HTTP.
+
+### Cobertura actual
+
+**Service Tests**
+
+* AuthServiceImplTest
+* ProductServiceImplTest
+* OrderServiceImplTest
+
+Valida:
+
+* Registro y login
+* Validaciones de negocio
+* Manejo de excepciones
+* Flujo de estados de órdenes
+* Validación de stock
+* Restauración de stock
+* Ownership validation
+
+---
+
+**Controller Tests**
+
+* AuthControllerTest
+* ProductControllerTest
+* OrderControllerTest
+
+Valida:
+
+* Status HTTP
+* Respuestas JSON
+* Endpoints REST
+* Requests y responses HTTP
+* Validaciones HTTP
+* Endpoints protegidos
+
+---
+
+**Tecnologías utilizadas en testing**
+
+* JUnit 5
+* Mockito
+* AssertJ
+* MockMvc
+* Spring Boot Test
+* Spring Security Test
+
+---
+
+**Ejecutar tests**
+
+Desde la raíz del proyecto:
+
+```bash
+mvn test
+```
 
 ---
 
@@ -517,6 +583,7 @@ El sistema:
 * Dockerización completa del sistema
 * Comunicación asíncrona con Kafka/RabbitMQ
 * Notificaciones
+* Tests de integración con Testcontainers
 
 ---
 
@@ -536,6 +603,7 @@ Demostrar:
 * Ownership validation
 * Domain state flow
 * Documentación profesional de APIs con Swagger/OpenAPI
+* Testing backend profesional
 
 # 👨‍💻 Autor
 
