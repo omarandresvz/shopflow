@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/health").permitAll()
+
                         // Swagger/OpenAPI
                         .requestMatchers(
                                 "/swagger-ui.html",
@@ -55,9 +57,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/ship").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/deliver").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/*/cancel").hasAnyRole("CUSTOMER", "ADMIN")
-
                         .requestMatchers("/api/v1/orders/**").hasAnyRole("CUSTOMER", "ADMIN")
-
+                        
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,0 +1,149 @@
+name: shopflow
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: shopflow-postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - shopflow-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  auth-service:
+    build:
+      context: ./auth-service
+
+    container_name: auth-service
+
+    ports:
+      - "8081:8081"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+    
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+      
+    env_file:
+      - .env.docker
+
+    networks:
+      - shopflow-network
+
+
+  product-service:
+    build:
+      context: ./product-service
+
+    container_name: product-service
+
+    ports:
+      - "8082:8082"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+    env_file:
+      - .env.docker
+
+    networks:
+      - shopflow-network
+
+
+  order-service:
+    build:
+      context: ./order-service
+
+    container_name: order-service
+
+    ports:
+      - "8083:8083"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8083/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s      
+
+    env_file:
+      - .env.docker
+
+    networks:
+      - shopflow-network
+
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+
+    container_name: api-gateway
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      auth-service:
+        condition: service_healthy
+
+      product-service:
+        condition: service_healthy
+
+      order-service:
+        condition: service_healthy
+    
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+    env_file:
+      - .env.docker
+
+    networks:
+      - shopflow-network
+
+
+volumes:
+  postgres_data:
+
+
+networks:
+  shopflow-network:
