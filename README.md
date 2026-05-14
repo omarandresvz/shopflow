@@ -31,6 +31,8 @@ Service  Service   Service       |
 ---------------------------------
 ```
 
+---
+
 ### Conceptos clave
 
 * API Gateway centraliza el acceso
@@ -83,6 +85,8 @@ POST /api/v1/auth/register
 POST /api/v1/auth/login
 GET  /api/v1/auth/me
 ```
+
+---
 
 ### 📦 product-service (8082)
 
@@ -282,10 +286,10 @@ Características:
 
 El proyecto utiliza variables de entorno para evitar exponer datos sensibles.
 
-Archivo de ejemplo:
+Archivos de ejemplo:
 
 ```text
-.env.example
+.env.docker.example
 ```
 
 Ejemplo:
@@ -313,32 +317,83 @@ ORDER_SERVICE_DB_PASSWORD=postgres
 
 ---
 
-## 🐳 Base de datos con Docker
+## 🐳 Docker & Docker Compose
 
-El proyecto utiliza PostgreSQL ejecutándose en Docker.
+El proyecto puede ejecutarse completamente utilizando Docker Compose.
 
-Ejemplo de ejecución:
-
-```bash
-docker compose up -d
-```
-
-Bases de datos necesarias:
-
-```sql
-CREATE DATABASE auth_db;
-CREATE DATABASE product_db;
-CREATE DATABASE order_db;
-```
-
-Configuración local:
+### Servicios incluidos
 
 ```text
-Host: localhost
-Port: 5433
-User: postgres
-Password: postgres
+api-gateway
+auth-service
+product-service
+order-service
+postgres
 ```
+
+**Levantar todo el ecosistema**
+
+```bash
+docker compose up --build
+```
+
+**Ejecutar en segundo plano**
+
+```bash
+docker compose up -d --build
+```
+
+**Detener contenedores**
+
+```bash
+docker compose down
+```
+
+**Reconstruir imágenes**
+
+```bash
+docker compose build --no-cache
+```
+---
+
+### Variables de entorno
+
+Todos los servicios utilizan variables de entorno definidas en:
+
+```text
+.env.docker
+```
+
+El archivo de ejemplo:
+
+```text
+.env.docker.example
+```
+
+---
+
+### Comunicación entre servicios
+
+Los servicios se comunican mediante la red Docker interna `shopflow-network`.
+
+```text
+api-gateway → auth-service:8081
+order-service → product-service:8082
+```
+
+---
+
+### Healthchecks
+
+Cada servicio expone endpoints de monitoreo mediante Spring Boot Actuator.
+
+Endpoint utilizado por Docker Compose:
+
+```text
+/actuator/health
+```
+
+Docker Compose utiliza estos endpoints para verificar disponibilidad de servicios.
 
 ---
 
@@ -353,27 +408,41 @@ cd shopflow
 
 ---
 
-### 2. Crear archivo `.env`
+### 2. Crear archivo `.env.docker`
 
-Basado en `.env.example`
+Basado en `.env.docker.example`
 
 ---
 
-### 3. Levantar base de datos
+### 3. Ejecutar todo el ecosistema
 
 ```bash
-docker compose up -d
+docker compose up --build
 ```
 
 ---
 
-### 4. Compilar proyecto
+### 4. Acceder al sistema
 
-Desde la raíz del proyecto:
+**Gateway:**
 
-```bash
-mvn clean install
+```text
+http://localhost:8080
 ```
+
+**Swagger:**
+
+```text
+http://localhost:8081/swagger-ui.html
+http://localhost:8082/swagger-ui.html
+http://localhost:8083/swagger-ui.html
+```
+
+---
+
+### Persistencia de datos
+
+PostgreSQL utiliza volúmenes Docker para persistir información entre reinicios de contenedores.
 
 ---
 
@@ -513,6 +582,8 @@ El sistema:
 * Swagger / OpenAPI 
 * JUnit 5
 * Mockito
+* Docker
+* Docker Compose
 
 ---
 
@@ -580,7 +651,6 @@ mvn test
 
 ## 📌 Mejoras futuras
 
-* Dockerización completa del sistema
 * Comunicación asíncrona con Kafka/RabbitMQ
 * Notificaciones
 * Tests de integración con Testcontainers
@@ -604,6 +674,9 @@ Demostrar:
 * Domain state flow
 * Documentación profesional de APIs con Swagger/OpenAPI
 * Testing backend profesional
+* Arquitectura containerizada con Docker Compose
+
+---
 
 # 👨‍💻 Autor
 
