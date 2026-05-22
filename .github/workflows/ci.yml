@@ -2,11 +2,6 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - "feature/**"
-      - "fix/**"
-      - "docs/**"
   pull_request:
     branches:
       - main
@@ -30,5 +25,5 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Build and run tests
+      - name: Run Maven verify
         run: mvn clean verify
