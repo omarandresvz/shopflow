@@ -584,6 +584,7 @@ El sistema:
 * Mockito
 * Docker
 * Docker Compose
+* GitHub Actions (CI)
 
 ---
 
@@ -649,6 +650,27 @@ mvn test
 
 ---
 
+## 🔄 Continuous Integration
+
+El proyecto utiliza GitHub Actions para validar automáticamente cambios en cada push y Pull Request.
+
+Actualmente el pipeline ejecuta:
+
+```text
+✔ Maven build
+✔ Unit tests
+✔ Controller tests
+✔ Docker image validation
+```
+
+El workflow se encuentra en:
+
+```text
+.github/workflows/ci.yml
+```
+
+---
+
 ## 📌 Mejoras futuras
 
 * Comunicación asíncrona con Kafka/RabbitMQ
@@ -675,7 +697,7 @@ Demostrar:
 * Documentación profesional de APIs con Swagger/OpenAPI
 * Testing backend profesional
 * Arquitectura containerizada con Docker Compose
-
+* Integración continua (CI)
 ---
 
 # 👨‍💻 Autor
