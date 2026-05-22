@@ -27,3 +27,6 @@ jobs:
 
       - name: Run Maven verify
         run: mvn clean verify
+
+      - name: Build Docker images
+        run: docker compose build
