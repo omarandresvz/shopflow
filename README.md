@@ -12,7 +12,8 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 * Configuración mediante variables de entorno
 * Módulo reutilizable de seguridad y validaciones (`shared`)
 * Documentación interactiva de APIs
-* Testing unitario y de controladores
+* Testing profesional multicapa (Unit, Integration, API y HTTP Client tests)
+* Integración continua con GitHub Actions
 
 ---
 
@@ -590,11 +591,15 @@ El sistema:
 
 ## 🧪 Testing
 
-El proyecto incluye pruebas unitarias y pruebas de controladores para validar la lógica de negocio y los endpoints HTTP.
+El proyecto implementa una estrategia de testing multicapa para validar comportamiento, persistencia, seguridad, APIs y comunicación entre microservicios.
 
-### Cobertura actual
+### Tipos de pruebas implementadas
 
-**Service Tests**
+### Unit Tests
+
+Valida lógica de negocio aislada utilizando mocks.
+
+Tests incluidos:
 
 * AuthServiceImplTest
 * ProductServiceImplTest
@@ -612,24 +617,96 @@ Valida:
 
 ---
 
-**Controller Tests**
+### Repository Integration Tests
 
-* AuthControllerTest
-* ProductControllerTest
-* OrderControllerTest
+Valida persistencia real utilizando PostgreSQL mediante Testcontainers.
+
+Tests incluidos:
+
+* UserRepositoryIntegrationTest
+* ProductRepositoryIntegrationTest
+* OrderRepositoryIntegrationTest
+
+Valida:
+
+* Persistencia de entidades
+* Consultas personalizadas
+* Relaciones JPA
+* Restricciones y búsquedas
+
+---
+
+### Service Integration Tests
+
+Valida servicios reales junto a persistencia real.
+
+Tests incluidos:
+
+* ProductServiceIntegrationTest
+* OrderServiceIntegrationTest
+
+Valida:
+
+* Operaciones CRUD
+* Flujo completo de negocio
+* Persistencia en PostgreSQL
+* Integración con componentes reales
+
+---
+
+### API Integration Tests
+
+Valida endpoints HTTP completos usando MockMvc.
+
+Tests incluidos:
+
+* AuthControllerIntegrationTest
+* ProductControllerIntegrationTest
+* OrderControllerIntegrationTest
 
 Valida:
 
 * Status HTTP
 * Respuestas JSON
-* Endpoints REST
-* Requests y responses HTTP
+* Seguridad
+* Roles y autorización
+* Requests y responses
 * Validaciones HTTP
 * Endpoints protegidos
 
 ---
 
-**Tecnologías utilizadas en testing**
+### HTTP Client Integration Tests
+
+Valida comunicación HTTP entre microservicios mediante WireMock.
+
+Tests incluidos:
+
+* ProductClientIntegrationTest
+
+Valida:
+
+* Construcción correcta de requests
+* Métodos HTTP
+* Traducción de errores remotos
+* Manejo de respuestas HTTP
+* Comunicación REST simulada
+
+Flujo probado:
+
+```text
+OrderService
+    ↓
+ProductClient
+    ↓
+HTTP
+    ↓
+WireMock (simula product-service)
+```
+
+---
+
+### Tecnologías utilizadas en testing
 
 * JUnit 5
 * Mockito
@@ -637,16 +714,37 @@ Valida:
 * MockMvc
 * Spring Boot Test
 * Spring Security Test
+* Testcontainers
+* WireMock
+* PostgreSQL (contenedores reales)
 
 ---
 
-**Ejecutar tests**
+### Ejecutar pruebas
 
-Desde la raíz del proyecto:
+Ejecutar todos los tests:
 
 ```bash
 mvn test
 ```
+
+Ejecutar build completo con validación:
+
+```bash
+mvn clean install
+```
+
+---
+
+### Beneficios de la estrategia de testing
+
+✔ Validación de lógica de negocio  
+✔ Validación de persistencia real  
+✔ Validación de seguridad  
+✔ Validación de APIs HTTP  
+✔ Validación de comunicación entre servicios  
+✔ Detección temprana de errores  
+✔ Soporte para integración continua (CI)
 
 ---
 
@@ -659,8 +757,11 @@ Actualmente el pipeline ejecuta:
 ```text
 ✔ Maven build
 ✔ Unit tests
-✔ Controller tests
-✔ Docker image validation
+✔ Repository integration tests
+✔ Service integration tests
+✔ API integration tests
+✔ HTTP Client integration tests
+✔ Verificación completa mediante Maven
 ```
 
 El workflow se encuentra en:
@@ -675,7 +776,6 @@ El workflow se encuentra en:
 
 * Comunicación asíncrona con Kafka/RabbitMQ
 * Notificaciones
-* Tests de integración con Testcontainers
 
 ---
 
