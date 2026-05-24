@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    name: Build and Test
+    name: Build, Test and Coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -25,8 +25,17 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Run Maven verify
+      - name: Build, test and generate coverage
         run: mvn clean verify
+      
+      - name: Upload JaCoCo coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-reports
+          path: |
+            auth-service/target/site/jacoco
+            product-service/target/site/jacoco
+            order-service/target/site/jacoco
 
       - name: Build Docker images
         run: docker compose build
