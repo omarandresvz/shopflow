@@ -748,6 +748,25 @@ mvn clean install
 
 ---
 
+### Code Coverage
+
+El proyecto utiliza JaCoCo para medir cobertura de código y validar calidad durante la integración continua.
+
+Características:
+
+* Generación automática de reportes HTML
+* Integración con GitHub Actions
+* Reportes descargables mediante artifacts
+* Validación automática de cobertura mínima
+
+Cobertura mínima requerida:
+
+```text
+Line Coverage >= 80%
+```
+
+---
+
 ## 🔄 Continuous Integration
 
 El proyecto utiliza GitHub Actions para validar automáticamente cambios en cada push y Pull Request.
@@ -761,7 +780,9 @@ Actualmente el pipeline ejecuta:
 ✔ Service integration tests
 ✔ API integration tests
 ✔ HTTP Client integration tests
-✔ Verificación completa mediante Maven
+✔ JaCoCo coverage generation
+✔ Coverage validation
+✔ Docker image validation
 ```
 
 El workflow se encuentra en:
