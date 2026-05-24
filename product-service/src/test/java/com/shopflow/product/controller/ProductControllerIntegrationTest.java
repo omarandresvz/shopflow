@@ -17,6 +17,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -32,9 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Testcontainers
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(
+        replace = AutoConfigureTestDatabase.Replace.NONE
+)
 class ProductControllerIntegrationTest {
 
     @Container
