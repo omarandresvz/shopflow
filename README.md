@@ -13,6 +13,8 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 * Módulo reutilizable de seguridad y validaciones (`shared`)
 * Documentación interactiva de APIs
 * Testing profesional multicapa (Unit, Integration, API y HTTP Client tests)
+* Cobertura de código automatizada con JaCoCo
+* Análisis continuo de calidad con SonarQube Cloud
 * Integración continua con GitHub Actions
 
 ---
@@ -137,8 +139,12 @@ PATCH /api/v1/orders/{id}/deliver    → ADMIN
 
 Responsable de:
 
-* Enrutamiento
+* Enrutamiento centralizado
 * Punto de entrada único
+* Validación distribuida de JWT
+* Reglas RBAC
+* Manejo global de errores
+* Handlers personalizados (`401` / `403`)
 
 Rutas:
 
@@ -191,6 +197,7 @@ Incluye:
 * `ErrorResponse`
 * Handlers de seguridad (`401` / `403`)
 * Configuración reutilizable
+* Componentes reutilizables completamente cubiertos mediante Unit Tests
 
 ---
 
@@ -585,6 +592,8 @@ El sistema:
 * Mockito
 * Docker
 * Docker Compose
+* JaCoCo
+* SonarQube Cloud
 * GitHub Actions (CI)
 
 ---
@@ -604,15 +613,24 @@ Tests incluidos:
 * AuthServiceImplTest
 * ProductServiceImplTest
 * OrderServiceImplTest
+* JwtServiceTest
+* JwtAuthenticationFilterTest
+* JwtAuthenticationEntryPointTest
+* JwtAccessDeniedHandlerTest
+* GatewayGlobalErrorHandlerTest
+* GatewayAuthenticationEntryPointTest
+* GatewayAccessDeniedHandlerTest
+* JwtAuthenticationConverterTest
 
 Valida:
 
-* Registro y login
-* Validaciones de negocio
-* Manejo de excepciones
-* Flujo de estados de órdenes
-* Validación de stock
-* Restauración de stock
+* Lógica de negocio
+* Seguridad JWT
+* Filtros de autenticación
+* Handlers HTTP (`401` / `403`)
+* Conversión de autenticación en Gateway
+* Manejo global de errores
+* Flujo de estados
 * Ownership validation
 
 ---
@@ -754,10 +772,17 @@ El proyecto utiliza JaCoCo para medir cobertura de código y validar calidad dur
 
 Características:
 
-* Generación automática de reportes HTML
-* Integración con GitHub Actions
+* Generación automática de reportes JaCoCo
+* Integración automática con GitHub Actions
+* Integración con SonarQube Cloud
 * Reportes descargables mediante artifacts
-* Validación automática de cobertura mínima
+* Validación continua de calidad
+* Cobertura agregada entre microservicios
+
+
+Cobertura actual:
+
+Cobertura validada automáticamente durante CI mediante JaCoCo + SonarQube Cloud.
 
 Cobertura mínima requerida:
 
@@ -771,7 +796,7 @@ Line Coverage >= 80%
 
 El proyecto utiliza GitHub Actions para validar automáticamente cambios en cada push y Pull Request.
 
-Actualmente el pipeline ejecuta:
+Actualmente el pipeline ejecuta automáticamente:
 
 ```text
 ✔ Maven build
@@ -781,6 +806,8 @@ Actualmente el pipeline ejecuta:
 ✔ API integration tests
 ✔ HTTP Client integration tests
 ✔ JaCoCo coverage generation
+✔ SonarQube Cloud quality analysis
+✔ Security hotspot validation
 ✔ Coverage validation
 ✔ Docker image validation
 ```
@@ -797,6 +824,20 @@ El workflow se encuentra en:
 
 * Comunicación asíncrona con Kafka/RabbitMQ
 * Notificaciones
+
+---
+
+## 📊 Calidad del proyecto
+
+Calidad automatizada mediante SonarQube Cloud:
+
+```text
+✔ Quality Gate: Passed
+✔ Security Rating: A
+✔ Reliability Rating: A
+✔ Maintainability Rating: A
+✔ Duplications: 0%
+```
 
 ---
 
@@ -819,6 +860,9 @@ Demostrar:
 * Testing backend profesional
 * Arquitectura containerizada con Docker Compose
 * Integración continua (CI)
+* Cobertura y calidad automatizada con JaCoCo + SonarQube Cloud
+* Integración continua automatizada con GitHub Actions
+
 ---
 
 # 👨‍💻 Autor
