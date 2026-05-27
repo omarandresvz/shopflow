@@ -1,5 +1,10 @@
 # 🛒 ShopFlow - E-commerce con Microservicios (Spring Boot)
 
+[![CI](https://github.com/omarandresvz/shopflow/actions/workflows/ci.yml/badge.svg)](https://github.com/omarandresvz/shopflow/actions)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=omarandresvz_shopflow)
+![Coverage](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=coverage)
+![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=sqale_rating)
+
 ## 🚀 Descripción
 
 ShopFlow es un backend de e-commerce basado en arquitectura de microservicios, construido con **Spring Boot 3.5.14**, **Java 21** y **Spring Cloud Gateway**.
