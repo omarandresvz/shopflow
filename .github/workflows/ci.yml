@@ -40,7 +40,7 @@ jobs:
             -Dsonar.projectKey=omarandresvz_shopflow \
             -Dsonar.organization=omarandresvz \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.coverage.jacoco.xmlReportPaths=shared/target/site/jacoco/jacoco.xml,auth-service/target/site/jacoco/jacoco.xml,product-service/target/site/jacoco/jacoco.xml,order-service/target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=shared/target/site/jacoco/jacoco.xml,auth-service/target/site/jacoco/jacoco.xml,product-service/target/site/jacoco/jacoco.xml,order-service/target/site/jacoco/jacoco.xml,api-gateway/target/site/jacoco/jacoco.xml
       
       - name: Upload JaCoCo coverage reports
         uses: actions/upload-artifact@v4
@@ -51,6 +51,7 @@ jobs:
             auth-service/target/site/jacoco
             product-service/target/site/jacoco
             order-service/target/site/jacoco
+            api-gateway/target/site/jacoco
 
       - name: Build Docker images
         run: docker compose build
