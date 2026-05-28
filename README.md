@@ -24,6 +24,23 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 
 ---
 
+## ⭐ Aspectos destacados del proyecto
+
+✔ Microservices architecture with Spring Boot  
+✔ API Gateway pattern with Spring Cloud Gateway  
+✔ Stateless JWT authentication and RBAC  
+✔ Shared reusable security module  
+✔ Centralized global error handling  
+✔ REST communication between microservices  
+✔ Professional multi-layer testing strategy  
+✔ Testcontainers + WireMock integration testing  
+✔ JaCoCo coverage + SonarQube Cloud quality analysis  
+✔ Docker Compose multi-service environment  
+✔ GitHub Actions CI pipeline  
+✔ Quality Gate Passed with 80%+ coverage
+
+---
+
 ## 🧱 Arquitectura
 
 ```text
