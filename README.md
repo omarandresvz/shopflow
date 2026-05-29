@@ -4,6 +4,12 @@
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=omarandresvz_shopflow)
 ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=coverage)
 ![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=omarandresvz_shopflow&metric=sqale_rating)
+[![Release](https://img.shields.io/github/v/release/omarandresvz/shopflow)](https://github.com/omarandresvz/shopflow/releases)
+
+## 📦 Versión actual
+
+**Última release estable:** [v1.0.0](https://github.com/omarandresvz/shopflow/releases/tag/v1.0.0)
+
 
 ## 🚀 Descripción
 
@@ -93,7 +99,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 📦 Microservicios
+## 🛠️ Microservicios
 
 ### 🔐 auth-service (8081)
 
