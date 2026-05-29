@@ -80,6 +80,7 @@ Responsable de:
 * Registro de usuarios
 * Login
 * Generación de JWT
+* Creación automática de usuarios por defecto (opcional)
 
 Endpoints:
 
@@ -325,6 +326,39 @@ ORDER_SERVICE_DB_PASSWORD=postgres
 
 ---
 
+## 👥 Usuarios por Defecto
+
+Opcionalmente, el sistema puede crear usuarios iniciales al arrancar `auth-service`. La funcionalidad está deshabilitada por defecto y puede habilitarse mediante variables de entorno.
+
+Configuración mediante variables de entorno:
+
+```env
+APP_DEFAULT_USERS_ENABLED=true
+APP_DEFAULT_USERS_ADMIN_EMAIL=admin@shopflow.com
+APP_DEFAULT_USERS_ADMIN_PASSWORD=Admin123*
+APP_DEFAULT_USERS_CUSTOMER_EMAIL=customer@shopflow.com
+APP_DEFAULT_USERS_CUSTOMER_PASSWORD=Customer123*
+```
+
+Comportamiento:
+
+* Los usuarios se crean automáticamente al iniciar la aplicación.
+* Solo se crean si no existen previamente.
+* Las contraseñas se almacenan cifradas mediante BCrypt.
+* El proceso es idempotente y puede ejecutarse múltiples veces sin duplicar registros.
+
+Roles creados:
+
+| Usuario | Rol |
+|----------|------|
+| Admin | ADMIN |
+| Customer | CUSTOMER |
+
+> Los usuarios por defecto están pensados para entornos de desarrollo, demostración y despliegues iniciales.
+> En entornos productivos se recomienda utilizar credenciales seguras y gestionarlas mediante variables de entorno o servicios de secretos.
+
+---
+
 ## 🐳 Docker & Docker Compose
 
 El proyecto puede ejecutarse completamente utilizando Docker Compose.
@@ -340,6 +374,12 @@ postgres
 ```
 
 **Levantar todo el ecosistema**
+
+Antes de ejecutar Docker Compose es necesario generar los artefactos:
+
+```bash
+mvn clean install
+```
 
 ```bash
 docker compose up --build
@@ -422,7 +462,15 @@ Basado en `.env.docker.example`
 
 ---
 
-### 3. Ejecutar todo el ecosistema
+### 3. Construir artefactos
+
+```bash
+mvn clean install
+```
+
+---
+
+### 4. Ejecutar todo el ecosistema
 
 ```bash
 docker compose up --build
@@ -430,7 +478,7 @@ docker compose up --build
 
 ---
 
-### 4. Acceder al sistema
+### 5. Acceder al sistema
 
 **Gateway:**
 
@@ -477,6 +525,8 @@ Características:
 ## 🔄 Flujo de uso
 
 ### 1. Registrar usuario
+
+Si se configuraron usuarios por defecto, puedes iniciar sesión directamente utilizando las credenciales definidas en las variables de entorno.
 
 ```http
 POST /api/v1/auth/register
@@ -780,8 +830,6 @@ Características:
 * Cobertura agregada entre microservicios
 
 
-Cobertura actual:
-
 Cobertura validada automáticamente durante CI mediante JaCoCo + SonarQube Cloud.
 
 Cobertura mínima requerida:
@@ -823,7 +871,8 @@ El workflow se encuentra en:
 ## 📌 Mejoras futuras
 
 * Comunicación asíncrona con Kafka/RabbitMQ
-* Notificaciones
+* Sistema de notificaciones
+* Observabilidad distribuida
 
 ---
 
