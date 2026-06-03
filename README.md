@@ -32,36 +32,122 @@ Este proyecto fue desarrollado como portafolio profesional, aplicando prácticas
 
 ## ⭐ Aspectos destacados del proyecto
 
-✔ Microservices architecture with Spring Boot  
-✔ API Gateway pattern with Spring Cloud Gateway  
-✔ Stateless JWT authentication and RBAC  
-✔ Shared reusable security module  
-✔ Centralized global error handling  
-✔ REST communication between microservices  
-✔ Professional multi-layer testing strategy  
-✔ Testcontainers + WireMock integration testing  
-✔ JaCoCo coverage + SonarQube Cloud quality analysis  
-✔ Docker Compose multi-service environment  
-✔ GitHub Actions CI pipeline  
-✔ Quality Gate Passed with 80%+ coverage
+✔ Arquitectura de microservicios con Spring Boot  
+✔ Patrón API Gateway con Spring Cloud Gateway  
+✔ Autenticación JWT stateless  
+✔ Módulo compartido reutilizable (Shared)  
+✔ Manejo global centralizado de errores  
+✔ Comunicación REST entre microservicios  
+✔ Testing multicapa profesional  
+✔ Testcontainers y WireMock  
+✔ JaCoCo + SonarQube Cloud  
+✔ Docker Compose  
+✔ GitHub Actions CI  
+✔ Quality Gate aprobado (>80% cobertura)
+
+---
+
+## ☁️ Despliegue
+
+ShopFlow se encuentra desplegado en Oracle Cloud Infrastructure (OCI) utilizando Docker y Docker Compose.
+
+### Infraestructura
+
+| Componente        | Tecnología                        |
+| ----------------- | --------------------------------- |
+| Cloud Provider    | Oracle Cloud Infrastructure (OCI) |
+| Instancia         | VM.Standard.E2.1.Micro            |
+| Sistema Operativo | Ubuntu 24.04                      |
+| Contenedores      | Docker                            |
+| Orquestación      | Docker Compose                    |
+| Base de Datos     | PostgreSQL 16                     |
+| API Gateway       | Spring Cloud Gateway              |
+
+### Servicios desplegados
+
+```text
+api-gateway
+auth-service
+product-service
+order-service
+postgres
+```
+
+### Endpoint público (Demo)
+
+API Gateway Health Check:
+
+```text
+http://136.248.245.154:8080/actuator/health
+```
+
+Estado esperado:
+
+```json
+{
+  "status": "UP"
+}
+```
+
+Por seguridad, el API Gateway no expone públicamente todas las rutas. La documentación Swagger se encuentra disponible directamente por microservicio.
+
+La aplicación se ejecuta en Oracle Cloud Infrastructure (OCI) sobre Ubuntu 24.04 utilizando Docker y Docker Compose.
+
+## 📸 Evidencia de Despliegue
+
+### Oracle Cloud Infrastructure (OCI)
+
+![Oracle VM](docs/screenshots/deployment-oracle-vm.png)
+
+Instancia Ubuntu 24.04 desplegada en Oracle Cloud Infrastructure con IP pública.
+
+### Contenedores Docker en ejecución
+
+![Docker Containers](docs/screenshots/deployment-docker-containers.png)
+
+Todos los microservicios y PostgreSQL ejecutándose mediante Docker Compose.
+
+### API Gateway Health Check
+
+![Health Check](docs/screenshots/deployment-health-check.png)
+
+Verificación pública del estado del API Gateway desplegado en la nube.
+
+### Documentación OpenAP
+
+![Swagger](docs/screenshots/deployment-swagger-products.png)
+
+Documentación interactiva generada automáticamente mediante SpringDoc OpenAPI.
 
 ---
 
 ## 🧱 Arquitectura
 
-```text
-Cliente
-  ↓
-API Gateway (8080)
-  ↓
----------------------------------
-|        |         |             |
-Auth     Product   Order         |
-Service  Service   Service       |
-(8081)   (8082)    (8083)        |
----------------------------------
-```
+```mermaid
+flowchart TD
+    Client[Cliente / Postman / Swagger] --> Gateway[API Gateway :8080]
 
+    Gateway --> Auth[Auth Service :8081]
+    Gateway --> Product[Product Service :8082]
+    Gateway --> Order[Order Service :8083]
+
+    Order -->|REST Client| Product
+
+    Auth --> DB[(PostgreSQL)]
+    Product --> DB
+    Order --> DB
+
+    subgraph OCI[Oracle Cloud Infrastructure - Ubuntu]
+        subgraph Docker[Docker Compose - shopflow-network]
+            Gateway
+            Auth
+            Product
+            Order
+            DB
+        end
+    end
+```
+ 
 ---
 
 ### Conceptos clave
